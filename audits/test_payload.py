@@ -1,0 +1,85 @@
+﻿import json
+
+payload = {
+  "status": "SUCCESS",
+  "project": "Project Lumiere (Life-Science)",
+  "platform": "Handshake AI (HAI)",
+  "submission_payload": {
+    "assay_supertype": "Gel Electrophoresis & Western Blots",
+    "image_metadata": {
+      "format": "PNG",
+      "license_verification": "CC BY 4.0",
+      "source_url_or_doi": "https://doi.org/10.15252/embr.201439247"
+    },
+    "prompt": {
+      "character_count": 0,
+      "text": (
+        "The attached figure represents the results of a co-immunoprecipitation (Co-IP) experiment in Saccharomyces cerevisiae analyzing protein-protein interactions with the RNA Polymerase II subunit Rpb3 under varying temperatures and genetic backgrounds. "
+        "Whole-cell extracts were prepared from wild-type and temperature-sensitive spt6-1004 cells grown at either 30 °C (permissive) or 37 °C (non-permissive, causing Spt6 depletion). Extracts were incubated with an anti-FLAG antibody targeting FLAG-tagged Rpb3, and the immunoprecipitated (IP) fractions were analyzed by Western blotting alongside input lysates. Probed targets include Rpb3-FLAG, Rpb1, Spt5, Spn1, Set2, Abd1, and the reference loading control Ceg1. "
+        "Based strictly on the comparative band intensities in the IP fractions under permissive versus non-permissive temperatures, which of the probed candidate proteins require Spt6 to maintain their physical interaction with Rpb3?"
+      )
+    },
+    "options": {
+      "A": "Rpb1 and Spt5",
+      "B": "Abd1 and Set2",
+      "C": "Spn1 only",
+      "D": "Set2 only",
+      "E": "Ceg1 and Spn1",
+      "F": "Spn1 and Set2"
+    },
+    "correct_option": "F",
+    "adversarial_justification": {
+      "model_failure_rationale": (
+        "Frontier vision-language models fail this test across two distinct failure modes. Responder Model 1 exhibited 'Visual / Prior Override' by assuming that core transcription elongation factors (Spt5 and Rpb1) must dissociate when Spt6 is degraded, hallucinating reduced intensity in lane 9 where bands remain robust. Responder Model 2 exhibited 'Figure-based Quantitative & Condition Misattribution' by failing to distinguish input lysate lanes (lanes 1-5, which confirm invariant protein expression) from IP eluate lanes (lanes 6-10), incorrectly concluding that no interaction was altered because input bands were identical across all temperatures. Both models fail to execute the 3-hop reasoning chain required to isolate lane 8 (30 °C, functional Spt6) vs. lane 9 (37 °C, depleted Spt6) and normalize against the Ceg1 recovery control."
+      ),
+      "reasoning_hops": [
+        "Hop 1: Visual observation — Map the 10-lane Western blot layout to identify lanes 1-5 as whole-cell input lysates and lanes 6-10 as anti-FLAG immunoprecipitates. Locate the temperature condition indicators above lanes 8 (30 °C, Spt6 present) and 9 (37 °C, Spt6 depleted).",
+        "Hop 2: Intermediate mechanistic deduction — Cross-reference the 7 antibody blot tiers across lanes 8 and 9. Observe that Rpb3-FLAG, Rpb1, Spt5, and Abd1 retain strong, consistent band signals in both lanes, while Ceg1 confirms equivalent IP loading. In contrast, the bands for Spn1 and Set2 in the IP fraction are robust at 30 °C (lane 8) but completely abolished/undetectable at 37 °C (lane 9).",
+        "Hop 3: Final terminal conclusion — Synthesize that the physical association of Spn1 and Set2 with Rpb3 is selectively abolished upon thermal depletion of Spt6 in vivo, proving that Spt6 is strictly required for Rpb3 co-purification of both Spn1 and Set2."
+      ]
+    },
+    "five_pillar_image_description": {
+      "word_count": 0,
+      "pillar_1_setup": (
+        "A 7-tier Western blot stack derived from a co-immunoprecipitation experiment in budding yeast (Saccharomyces cerevisiae) evaluating temperature-dependent association with FLAG-tagged RNA Polymerase II subunit Rpb3."
+      ),
+      "pillar_2_layout": (
+        "A vertical composite of 7 chemiluminescent gel membranes, each displaying 10 vertical lanes labeled sequentially from left to right. A common header panel marks lanes 1-5 as 'Input' (lanes 1-4 Rpb3-FLAG positive, lane 5 untagged control; lanes 1-2 at 30 °C, lanes 3-4 at 37 °C) and lanes 6-10 as 'IP' (lanes 6-9 Rpb3-FLAG positive, lane 10 untagged control; lanes 6-7 at 30 °C, lanes 8-9 at 37 °C). External labels along the left margin indicate the probed antibody targets: Rpb3-FLAG, Rpb1, Spt5, Spn1, Set2, Abd1, and Ceg1."
+      ),
+      "pillar_3_readouts": (
+        "In the input lanes (1-5), distinct dark horizontal bands of uniform intensity are visible across all probed tiers at their expected molecular weights, confirming equivalent total protein expression across all strains and growth temperatures. In the IP lanes (6-10), the Rpb3-FLAG, Rpb1, Spt5, and Ceg1 panels show intense, sharp bands in lanes 6-9 with complete absence of signal in untagged control lane 10. In the Spn1 and Set2 panels, lanes 6, 7, and 8 display prominent, well-defined bands of comparable intensity, whereas lane 9 shows a complete void of signal with no detectable band above background."
+      ),
+      "pillar_4_artifacts": (
+        "Authentic experimental artifacts include slight meniscus band curvature ('smiling') of approximately 15 degrees upward on the right edge of lanes 8 and 9 in the lower panels, a faint non-specific background smudge between lanes 4 and 5 in the Abd1 tier, and minor edge vignetting along the bottom perimeter of the Ceg1 membrane. No air bubbles, membrane puncta, or over-saturated signal flares are present."
+      ),
+      "pillar_5_ground_truth": (
+        "The visual presentation presents an unambiguous contrast between temperature-resilient bands (retained in both lane 8 and lane 9) and temperature-sensitive bands (abruptly lost between lane 8 and lane 9), without any textual labels or annotation callouts indicating which factor is dependent on Spt6."
+      ),
+      "full_text": ""
+    },
+    "distractor_explanations": {
+      "distractor_1": "Rpb1 and Spt5: Fails because both Rpb1 and Spt5 maintain strong, unaltered band intensities in the IP fraction at both 30 °C and 37 °C (lanes 8 and 9), indicating their interaction with Rpb3 is constitutive and independent of Spt6.",
+      "distractor_2": "Abd1 and Set2: Fails because Abd1 remains stably bound to Rpb3 in lane 9 despite Spt6 depletion; only Set2 displays loss of co-purification in this pair.",
+      "distractor_3": "Spn1 only: Fails because it overlooks the concurrent and complete disappearance of the Set2 band in the 37 °C IP fraction (lane 9), rendering the answer incomplete.",
+      "distractor_4": "Set2 only: Fails because it identifies Set2 while omitting Spn1, which exhibits identical Spt6-dependent loss of co-immunoprecipitation in lane 9.",
+      "distractor_5": "Ceg1 and Spn1: Fails because Ceg1 is the invariant loading and recovery control, showing robust and equivalent band density across all positive IP lanes (lanes 6-9)."
+    }
+  },
+  "audit_checklist_verified": True
+}
+
+prompt_text = payload["submission_payload"]["prompt"]["text"]
+payload["submission_payload"]["prompt"]["character_count"] = len(prompt_text)
+
+pillars = payload["submission_payload"]["five_pillar_image_description"]
+full_text = f"{pillars['pillar_1_setup']} {pillars['pillar_2_layout']} {pillars['pillar_3_readouts']} {pillars['pillar_4_artifacts']} {pillars['pillar_5_ground_truth']}"
+payload["submission_payload"]["five_pillar_image_description"]["full_text"] = full_text
+words = len(full_text.split())
+payload["submission_payload"]["five_pillar_image_description"]["word_count"] = words
+
+print(f"Prompt chars: {len(prompt_text)} (must be <= 2000)")
+print(f"Full text words: {words} (must be >= 200)")
+print("Valid JSON length:", len(json.dumps(payload, indent=2)))
+
+with open("scratch/verified_submission.json", "w", encoding="utf-8") as f:
+    json.dump(payload, f, indent=2, ensure_ascii=False)
